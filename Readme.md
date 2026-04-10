@@ -6,6 +6,7 @@ It takes a topic, plans research tasks, gathers web results, summarizes findings
 
 ## Features
 
+- Real CrewAI orchestration (`Agent`, `Task`, `Crew`)
 - Planner, Researcher, Writer, and Critic agent flow
 - DuckDuckGo search integration via `ddgs`
 - Local LLM support with Ollama (default)
@@ -39,13 +40,15 @@ research_agent/
 
 ## How It Works
 
-1. `planner_agent` creates task list from the input topic.
-2. `researcher_agent` loops through tasks:
+1. `run_crew(...)` tries CrewAI mode first (`USE_CREWAI=1`).
+2. If CrewAI is unavailable or errors, it falls back to the manual pipeline.
+3. In manual mode, `planner_agent` creates task list from the input topic.
+4. `researcher_agent` loops through tasks:
    - calls `search_web(...)`
    - calls `summarize(...)` on raw search results
-3. `writer_agent` turns summaries into a structured draft.
-4. `critic_agent` improves clarity/structure and returns final report.
-5. Final report is printed and saved to `output.md`.
+5. `writer_agent` turns summaries into a structured draft.
+6. `critic_agent` improves clarity/structure and returns final report.
+7. Final report is printed and saved to `output.md`.
 
 ## Requirements
 
@@ -80,6 +83,7 @@ Create/update `app/.env` (do not commit real secrets):
 ```env
 # Backend selection
 LLM_BACKEND=ollama
+USE_CREWAI=1
 
 # Ollama config
 OLLAMA_URL=http://127.0.0.1:11434/api/chat
